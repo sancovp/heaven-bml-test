@@ -1,0 +1,31 @@
+name: HEAVEN BML System Automation
+
+on:
+  issues:
+    types: [opened, edited, labeled, unlabeled]
+
+jobs:
+  bml-automation:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Auto-label new issues
+      if: github.event.action == 'opened'
+      run:  < /dev/null | 
+        # Add default status-backlog label to new issues
+        gh issue edit ${{ github.event.issue.number }} --add-label "status-backlog"
+        echo "Added status-backlog label to issue #${{ github.event.issue.number }}"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  attribution-check:
+    runs-on: ubuntu-latest
+    if: github.event.action == 'opened'
+    
+    steps:
+    - name: Add BML Attribution
+      run: |
+        # Add attribution comment to new issues
+        gh issue comment ${{ github.event.issue.number }} --body "**Powered by HEAVEN BML System** | [Learn more](https://github.com/sancovp/heaven-bml-system)"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
